@@ -146,10 +146,12 @@ jobs:
           name: Run pytest
           command: |
             mkdir -p /tmp/pytestcov
-            docker run -v /tmp/pytestcov:/tmp/pytestcov \
+            chmod 777 /tmp/pytestcov
+            docker run -v /tmp/pytestcov:/scratch \
+              -e COVERAGE_FILE=/scratch/.coverage.pytest \
               --entrypoint="/neurodocker/startup.sh" \
               poldracklab/fitlins:latest \
-              bash -c "cd /tmp/pytestcov && pytest --cov=fitlins /src/fitlins"
+              pytest --cov=fitlins /src/fitlins
 
   test_ds003:
     machine:
