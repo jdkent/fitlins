@@ -152,6 +152,10 @@ jobs:
               --entrypoint="/neurodocker/startup.sh" \
               poldracklab/fitlins:latest \
               pytest --cov=fitlins /src/fitlins
+      - persist_to_workspace:
+          root: /tmp/pytestcov
+          paths:
+            - .coverage*
 
   test_ds003:
     machine:
@@ -241,6 +245,11 @@ jobs:
                 --n-cpus 2 --database-path /out/pybidsdb -vv
       - store_artifacts:
           path: /tmp/ds003
+      - persist_to_workspace:
+          root: /tmp/ds003
+          paths:
+            - work/.coverage.*
+            - work_dbf*/.coverage.*
 
   upload_coverage:
     machine:
@@ -263,7 +272,7 @@ jobs:
                 --rcfile /tmp/src/fitlins/docker/multiproc.coveragerc \
                 /tmp/ds003/work/.coverage.* \
                 /tmp/ds003/work_dbf*/.coverage.* \
-                /tmp/pytestcov/.coverage.*
+                /tmp/pytestcov/.coverage*
 
               sed -i -e 's/\/src\/fitlins/\/tmp\/src\/fitlins/g' .coverage
               sed -i -e 's/.opt.miniconda-latest.envs.neuro.lib.python3.6.site-packages/\/tmp\/src\/fitlins/g' .coverage
